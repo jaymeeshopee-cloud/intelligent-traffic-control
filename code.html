@@ -6,18 +6,18 @@
   <title>Intelligent Traffic Control Dashboard</title>
   <style>
     :root {
-      --bg: #0b1220;
-      --panel: rgba(255, 255, 255, 0.06);
-      --panel-strong: rgba(255, 255, 255, 0.12);
-      --border: rgba(255, 255, 255, 0.12);
-      --text: #e5e9ff;
-      --muted: rgba(229, 233, 255, 0.7);
+      --bg1: #06080f;
+      --bg2: #0e1320;
+      --card: rgba(255, 255, 255, 0.08);
+      --card-strong: rgba(255, 255, 255, 0.12);
+      --border: rgba(255, 255, 255, 0.16);
+      --text: rgba(232, 239, 255, 0.92);
+      --muted: rgba(232, 239, 255, 0.7);
       --accent: #39b7ff;
-      --accent-2: #6be584;
-      --warning: #ff9d7b;
+      --warn: #ffb470;
       --danger: #ff5a7a;
-      --radius: 14px;
-      --shadow: 0 20px 55px rgba(0, 0, 0, 0.55);
+      --radius: 18px;
+      --shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
@@ -28,1023 +28,505 @@
     body {
       margin: 0;
       min-height: 100vh;
-      background: radial-gradient(circle at top, rgba(57, 183, 255, 0.24), transparent 60%),
-        linear-gradient(150deg, #080c16, #0f121f);
       color: var(--text);
-      overflow: hidden;
+      background: radial-gradient(circle at 20% 10%, rgba(57, 183, 255, 0.18), transparent 55%),
+        linear-gradient(140deg, var(--bg1), var(--bg2));
+      overflow-x: hidden;
     }
 
     header {
-      height: 72px;
-      padding: 0 24px;
+      padding: 18px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid var(--border);
-      backdrop-filter: blur(18px);
-      position: sticky;
-      top: 0;
-      z-index: 2;
-      background: rgba(11, 18, 32, 0.72);
+      gap: 14px;
     }
 
     header h1 {
-      font-size: 1.15rem;
-      letter-spacing: 0.06em;
       margin: 0;
-      display: flex;
-      align-items: center;
-      gap: 12px;
+      font-size: 1.2rem;
+      letter-spacing: 0.05em;
     }
 
-    header .brand {
-      width: 44px;
-      height: 44px;
-      border-radius: 16px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      display: grid;
-      place-items: center;
-      box-shadow: 0 20px 30px rgba(0, 0, 0, 0.35);
-      font-weight: 800;
-      font-size: 1.1rem;
-      color: rgba(10, 25, 38, 0.88);
-    }
-
-    header nav {
-      display: flex;
-      gap: 14px;
-      align-items: center;
-    }
-
-    header nav button {
-      padding: 10px 14px;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      background: rgba(255, 255, 255, 0.08);
-      color: var(--text);
-      cursor: pointer;
-      font-weight: 600;
-      transition: transform 120ms ease, background 180ms ease;
-    }
-
-    header nav button:hover {
-      transform: translateY(-1px);
-      background: rgba(255, 255, 255, 0.12);
+    header .subtitle {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 6px;
     }
 
     main {
       display: grid;
-      grid-template-columns: 320px 1fr;
+      grid-template-columns: 1fr 320px;
       gap: 18px;
-      padding: 20px;
-      height: calc(100vh - 72px);
-      overflow: hidden;
+      padding: 0 20px 20px;
     }
 
-    .sidebar {
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-      padding-right: 4px;
-      overflow: hidden;
-    }
-
-    .panel {
-      background: var(--panel);
+    .card {
+      background: var(--card);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 16px;
+      padding: 18px;
+      backdrop-filter: blur(15px);
       box-shadow: var(--shadow);
-      backdrop-filter: blur(14px);
-    }
-
-    .panel h2 {
-      margin: 0 0 12px;
-      font-size: 1.05rem;
-      letter-spacing: 0.02em;
-      color: var(--text);
-    }
-
-    .row {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .stat {
-      flex: 1 1 140px;
-      padding: 14px;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      display: grid;
-      gap: 6px;
-    }
-
-    .stat label {
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
-
-    .stat .value {
-      font-size: 1.4rem;
-      font-weight: 700;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 0.78rem;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      color: var(--muted);
-    }
-
-    .badge span {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      display: inline-block;
-      background: var(--accent);
-    }
-
-    .badge.warning span {
-      background: var(--warning);
-    }
-
-    .badge.danger span {
-      background: var(--danger);
-    }
-
-    .controls {
-      display: grid;
-      gap: 12px;
-    }
-
-    .controls label {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      font-size: 0.85rem;
-      color: var(--muted);
-    }
-
-    .controls input[type=range] {
-      width: 100%;
-    }
-
-    .controls select {
-      padding: 10px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      background: rgba(255, 255, 255, 0.06);
-      color: var(--text);
-      outline: none;
-    }
-
-    .btn-primary {
-      appearance: none;
-      outline: none;
-      border: none;
-      padding: 12px 14px;
-      border-radius: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      color: rgba(10, 25, 38, 0.95);
-      box-shadow: 0 8px 18px rgba(57, 183, 255, 0.35);
-      transition: transform 120ms ease, filter 120ms ease;
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-1px);
-      filter: brightness(1.05);
-    }
-
-    .main-grid {
-      display: grid;
-      grid-template-rows: 1fr 320px;
-      gap: 18px;
       overflow: hidden;
     }
 
-    .traffic-map {
+    .dashboard {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 18px;
+    }
+
+    .simulation {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 240px;
+      gap: 16px;
+    }
+
+    .sim-canvas {
       position: relative;
       border-radius: var(--radius);
-      border: 1px solid var(--border);
+      background: rgba(20, 30, 48, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      height: 400px;
       overflow: hidden;
-      background: radial-gradient(circle at 25% 20%, rgba(57, 183, 255, 0.14), transparent 60%),
-        linear-gradient(120deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.7));
-      box-shadow: var(--shadow);
+      display: grid;
+      place-items: center;
+      padding: 18px;
     }
 
-    .map-canvas {
-      width: 100%;
-      height: 100%;
-      display: block;
+    .control-panel {
+      display: grid;
+      gap: 12px;
     }
 
-    .status-overlay {
-      position: absolute;
-      left: 16px;
-      top: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      padding: 10px;
-      border-radius: 14px;
-      background: rgba(0, 0, 0, 0.35);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      max-width: 320px;
-      color: var(--text);
-      font-size: 0.85rem;
-    }
-
-    .status-overlay h3 {
+    .control-panel h2 {
       margin: 0 0 8px;
       font-size: 1rem;
     }
 
-    .status-overlay .line {
-      display: flex;
+    .btn {
+      display: inline-flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text);
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 120ms ease, background 140ms ease;
     }
 
-    .status-overlay .line span:first-child {
-      color: var(--muted);
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      transform: translateY(-1px);
     }
 
-    .chart-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-      height: 100%;
-      overflow: hidden;
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #6be584);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: rgba(10, 20, 30, 0.92);
+      box-shadow: 0 12px 24px rgba(57, 183, 255, 0.25);
     }
 
-    .chart {
-      position: relative;
-      height: 100%;
-      border-radius: var(--radius);
-      background: var(--panel);
-      border: 1px solid var(--border);
-      padding: 14px;
+    .status {
       display: flex;
       flex-direction: column;
-      box-shadow: var(--shadow);
+      gap: 6px;
     }
 
-    .chart canvas {
-      flex: 1;
+    .status span {
+      font-size: 0.88rem;
+    }
+
+    .status .value {
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .lights {
       width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 12px;
+      padding: 16px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(0, 0, 0, 0.24);
+    }
+
+    .light-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .light-group h3 {
+      margin: 0;
+      font-size: 0.95rem;
+      letter-spacing: 0.02em;
+      color: var(--text);
+    }
+
+    .traffic-light {
+      width: 70px;
+      padding: 12px;
+      border-radius: 18px;
+      background: rgba(0, 0, 0, 0.34);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: grid;
+      gap: 10px;
+      justify-items: center;
+    }
+
+    .lamp {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.12);
+      box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.35);
+      transition: background 180ms ease, box-shadow 180ms ease;
+    }
+
+    .lamp.active {
+      box-shadow: 0 0 18px rgba(255, 255, 255, 0.35);
+    }
+
+    .lamp.red.active {
+      background: rgba(255, 90, 122, 0.95);
+    }
+
+    .lamp.yellow.active {
+      background: rgba(255, 204, 87, 0.92);
+    }
+
+    .lamp.green.active {
+      background: rgba(57, 183, 255, 0.92);
+    }
+
+    .logs {
+      display: flex;
+      flex-direction: column;
       height: 100%;
     }
 
-    .table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.9rem;
-      overflow: auto;
+    .log-list {
+      margin: 0;
+      padding: 12px;
+      list-style: none;
+      overflow-y: auto;
+      border-radius: 14px;
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      flex: 1;
     }
 
-    .table thead th {
-      text-align: left;
-      padding: 12px 10px;
-      font-size: 0.8rem;
-      letter-spacing: 0.06em;
+    .log-item {
+      margin: 0 0 8px;
+      font-size: 0.85rem;
       color: var(--muted);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+      border-left: 3px solid rgba(57, 183, 255, 0.6);
+      padding-left: 10px;
     }
 
-    .table td {
-      padding: 12px 10px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .table tr:hover td {
-      background: rgba(255, 255, 255, 0.06);
-    }
-
-    .small {
-      font-size: 0.82rem;
-      color: var(--muted);
-    }
-
-    .footer {
-      padding: 14px 20px;
+    footer {
+      padding: 18px 20px;
       text-align: center;
-      font-size: 0.82rem;
-      color: rgba(229, 233, 255, 0.65);
+      font-size: 0.8rem;
+      color: rgba(232, 239, 255, 0.65);
     }
 
-    @media (max-width: 1100px) {
+    @media (max-width: 768px) {
       main {
         grid-template-columns: 1fr;
-        height: auto;
       }
 
-      .main-grid {
-        grid-template-rows: auto auto;
+      .simulation {
+        grid-template-columns: 1fr;
       }
 
-      .sidebar {
+      .card.logs {
         order: 2;
       }
 
-      .main-grid {
+      .card.sim {
         order: 1;
       }
 
-      header {
-        flex-wrap: wrap;
-        gap: 12px;
+      .control-panel {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
       }
 
-      header nav {
-        width: 100%;
-        justify-content: flex-end;
-      }
-    }
-
-    @media (max-width: 620px) {
-      header {
-        padding: 14px;
-      }
-
-      .stat {
-        flex: 1 1 100%;
-      }
-
-      .chart-grid {
+      .lights {
         grid-template-columns: 1fr;
+      }
+
+      .simulation {
+        display: grid;
+        grid-template-rows: auto auto;
+      }
+
+      .logs {
+        margin-top: 16px;
       }
     }
   </style>
 </head>
-
 <body>
   <header>
-    <h1>
-      <span class="brand">ITC</span>
-      Intelligent Traffic Control
-    </h1>
-    <nav>
-      <button id="btnReset">Reset Simulation</button>
-      <button id="btnSnapshot">Capture Snapshot</button>
-    </nav>
+    <div>
+      <h1>Intelligent Traffic Control</h1>
+      <p class="subtitle">Glassmorphism dashboard · 2-way intersection state machine</p>
+    </div>
+    <button class="btn btn-primary" id="btnSwitch">Switch Lights</button>
   </header>
 
   <main>
-    <section class="sidebar" aria-label="Control panel">
-      <div class="panel" aria-label="Realtime metrics">
-        <h2>Realtime Metrics</h2>
-        <div class="row" id="statRow">
-          <div class="stat">
-            <label>Total Vehicles</label>
-            <div class="value" id="statVehicles">0</div>
+    <section class="card sim">
+      <div class="dashboard">
+        <div class="simulation">
+          <div class="sim-canvas" aria-label="Visual simulation">
+            <div class="lights" id="lights">
+              <div class="light-group" aria-label="North-South signal">
+                <h3>North–South</h3>
+                <div class="traffic-light" data-direction="ns">
+                  <div class="lamp red" data-light="red"></div>
+                  <div class="lamp yellow" data-light="yellow"></div>
+                  <div class="lamp green" data-light="green"></div>
+                </div>
+              </div>
+              <div class="light-group" aria-label="East-West signal">
+                <h3>East–West</h3>
+                <div class="traffic-light" data-direction="ew">
+                  <div class="lamp red" data-light="red"></div>
+                  <div class="lamp yellow" data-light="yellow"></div>
+                  <div class="lamp green" data-light="green"></div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="stat">
-            <label>Average Speed (km/h)</label>
-            <div class="value" id="statSpeed">0</div>
-          </div>
-          <div class="stat">
-            <label>Congestion Level</label>
-            <div class="value" id="statCongestion">0%</div>
+
+          <div class="control-panel" aria-label="Simulation controls">
+            <div class="status">
+              <span>Current state:</span>
+              <span class="value" id="currentState">Initializing…</span>
+            </div>
+            <div class="status">
+              <span>Pending action:</span>
+              <span class="value" id="pendingState">None</span>
+            </div>
+            <div class="status">
+              <span>Last transition:</span>
+              <span class="value" id="lastTransition">—</span>
+            </div>
           </div>
         </div>
-
-        <div class="row" style="margin-top: 10px;">
-          <div class="stat">
-            <label>Signal Efficiency</label>
-            <div class="value" id="statEfficiency">0%</div>
-          </div>
-          <div class="stat">
-            <label>Incidents</label>
-            <div class="value" id="statIncidents">0</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="panel" aria-label="Simulation controls">
-        <h2>Simulation Controls</h2>
-        <div class="controls">
-          <label>
-            Time of day
-            <input type="range" id="timeOfDay" min="0" max="23" step="1" value="8" />
-            <small class="small" id="timeOfDayLabel">08:00</small>
-          </label>
-
-          <label>
-            Traffic flow intensity
-            <input type="range" id="flowIntensity" min="0" max="100" step="1" value="55" />
-            <small class="small" id="flowLabel">Normal</small>
-          </label>
-
-          <label>
-            Emergency override
-            <select id="overrideMode">
-              <option value="none">None</option>
-              <option value="police">Police Escort</option>
-              <option value="fire">Fire Response</option>
-              <option value="evac">Evacuation</option>
-            </select>
-          </label>
-
-          <button class="btn-primary" id="btnTriggerIncident">Inject Incident</button>
-        </div>
-      </div>
-
-      <div class="panel" aria-label="Recent alerts">
-        <h2>Recent Alerts</h2>
-        <table class="table" aria-label="Alert list">
-          <thead>
-            <tr>
-              <th>Time</th>
-              <th>Type</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="alertsTable">
-            <tr><td colspan="3" class="small">No alerts yet.</td></tr>
-          </tbody>
-        </table>
       </div>
     </section>
 
-    <section class="main-grid" aria-label="Main dashboard">
-      <section class="traffic-map" aria-label="Traffic flow map">
-        <canvas class="map-canvas" id="mapCanvas" width="1200" height="680"></canvas>
-        <div class="status-overlay" aria-label="Traffic status">
-          <h3>Intersection Status</h3>
-          <div class="line"><span>Idle</span><span id="statusIdle">0</span></div>
-          <div class="line"><span>Active</span><span id="statusActive">0</span></div>
-          <div class="line"><span>Blocked</span><span id="statusBlocked">0</span></div>
-          <div class="line"><span>Incident</span><span id="statusIncident">0</span></div>
-        </div>
-      </section>
-
-      <section class="chart-grid" aria-label="Charts and analytics">
-        <section class="chart" aria-label="Traffic volume chart">
-          <h2>Traffic Volume (last 60s)</h2>
-          <canvas id="volumeChart"></canvas>
-        </section>
-        <section class="chart" aria-label="Average speed chart">
-          <h2>Average Speed (km/h)</h2>
-          <canvas id="speedChart"></canvas>
-        </section>
-      </section>
-
-      <div class="panel" aria-label="Intersection controls">
-        <h2>Intersection Signals</h2>
-        <div class="row" id="intersectionRow"></div>
+    <section class="card logs">
+      <h2>System Logs</h2>
+      <div class="logs">
+        <ol class="log-list" id="logList" aria-label="System log"></ol>
       </div>
     </section>
   </main>
 
-  <footer class="footer">
-    Intelligent Traffic Control Dashboard — Simulated in vanilla HTML/CSS/JS • Updated: <span id="footerTime"></span>
+  <footer>
+    Built with vanilla HTML, CSS, and JS • Last update: <span id="footerTime"></span>
   </footer>
 
   <script>
-    // --- Utilities ---
-    const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
-    const formatTime = (h, m = 0) => `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
-    const lerp = (a, b, t) => a + (b - a) * t;
+    // ------------------------------------------------------------------
+    // Utility helpers
+    // ------------------------------------------------------------------
+    const $ = (selector) => document.querySelector(selector);
 
-    const $ = (id) => document.getElementById(id);
+    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-    // --- State ---
-    const state = {
-      timeOfDay: 8,
-      flowIntensity: 55,
-      overrideMode: "none",
-      activeIncidents: [],
-      lastSnapshot: null,
-      tick: 0,
-      metrics: {
-        vehicles: 0,
-        avgSpeed: 0,
-        congestion: 0,
-        efficiency: 0,
-        incidents: 0,
+    const formatTime = () => new Date().toLocaleTimeString([], {hour: "2-digit", minute: "2-digit", second: "2-digit"});
+
+    // ------------------------------------------------------------------
+    // State machine (trafficSystem)
+    // ------------------------------------------------------------------
+    const trafficSystem = {
+      // Intersection states: "green" | "yellow" | "red"
+      intersections: {
+        ns: { name: "North–South", state: "green" },
+        ew: { name: "East–West", state: "red" },
       },
-      intersections: [],
-      recentAlerts: [],
-      volumeHistory: Array(60).fill(0),
-      speedHistory: Array(60).fill(0),
+      isTransitioning: false, // ensures we don't start a second transition while one is already running
+      pendingSwitch: false, // if user requests a switch during transition, we enqueue one
+      logs: [],
+      lastTransition: "Never",
     };
 
-    const intersectionConfigs = [
-      { id: "A", x: 0.29, y: 0.28, name: "East Cross" },
-      { id: "B", x: 0.69, y: 0.27, name: "Main & 4th" },
-      { id: "C", x: 0.34, y: 0.66, name: "South Gate" },
-      { id: "D", x: 0.68, y: 0.64, name: "Park Junction" },
-    ];
+    // ------------------------------------------------------------------
+    // updateUI(): Render the UI based on trafficSystem state
+    // ------------------------------------------------------------------
+    function updateUI() {
+      // CONTROL FLOW: Called whenever the state changes. This function is synchronous
+      // and runs on the main thread (UI thread). It uses querySelector and classList
+      // to update DOM state without rebuilding the whole tree.
 
-    const signalStates = ["green", "yellow", "red"];
+      const currentStateLabel = $("#currentState");
+      const pendingLabel = $("#pendingState");
+      const transitionLabel = $("#lastTransition");
 
-    // --- DOM refs ---
-    const refs = {
-      timeOfDay: $("timeOfDay"),
-      timeOfDayLabel: $("timeOfDayLabel"),
-      flowIntensity: $("flowIntensity"),
-      flowLabel: $("flowLabel"),
-      overrideMode: $("overrideMode"),
-      btnTriggerIncident: $("btnTriggerIncident"),
-      btnReset: $("btnReset"),
-      btnSnapshot: $("btnSnapshot"),
-      statVehicles: $("statVehicles"),
-      statSpeed: $("statSpeed"),
-      statCongestion: $("statCongestion"),
-      statEfficiency: $("statEfficiency"),
-      statIncidents: $("statIncidents"),
-      alertsTable: $("alertsTable"),
-      intersectionRow: $("intersectionRow"),
-      statusIdle: $("statusIdle"),
-      statusActive: $("statusActive"),
-      statusBlocked: $("statusBlocked"),
-      statusIncident: $("statusIncident"),
-      footerTime: $("footerTime"),
-      mapCanvas: $("mapCanvas"),
-      volumeChart: $("volumeChart"),
-      speedChart: $("speedChart"),
-    };
+      const nsState = trafficSystem.intersections.ns.state;
+      const ewState = trafficSystem.intersections.ew.state;
 
-    const mapCtx = refs.mapCanvas.getContext("2d");
-    const volumeCtx = refs.volumeChart.getContext("2d");
-    const speedCtx = refs.speedChart.getContext("2d");
+      currentStateLabel.textContent = `NS: ${nsState.toUpperCase()} / EW: ${ewState.toUpperCase()}`;
+      pendingLabel.textContent = trafficSystem.pendingSwitch ? "Queued" : "None";
+      transitionLabel.textContent = trafficSystem.lastTransition;
+      $("#footerTime").textContent = formatTime();
 
-    const canvasResize = (canvas) => {
-      const rect = canvas.getBoundingClientRect();
-      const dpr = window.devicePixelRatio || 1;
-      canvas.width = Math.floor(rect.width * dpr);
-      canvas.height = Math.floor(rect.height * dpr);
-      const ctx = canvas.getContext("2d");
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      return rect;
-    };
+      // Update traffic light visuals
+      ["ns", "ew"].forEach((dir) => {
+        const light = $(`.traffic-light[data-direction="${dir}"]`);
+        if (!light) return;
+        const state = trafficSystem.intersections[dir].state;
 
-    const pickColor = (state) => {
-      if (state === "green") return "#39b7ff";
-      if (state === "yellow") return "#ffcc57";
-      return "#ff5a7a";
-    };
-
-    // --- Simulation logic ---
-    const updateMetrics = () => {
-      const base = 80 + state.flowIntensity * 1.4;
-      const variance = 30;
-      const vehicles = Math.round(base + Math.sin(state.tick / 14) * variance);
-      const congestion = clamp(Math.round((100 - state.flowIntensity / 1.2) + Math.sin(state.tick / 18) * 12), 2, 98);
-      const avgSpeed = clamp(Math.round(45 + (100 - congestion) / 3 + Math.cos(state.tick / 22) * 6), 16, 80);
-      const efficiency = clamp(Math.round(65 + (100 - congestion) / 2 + (state.overrideMode !== "none" ? 5 : 0)), 30, 99);
-
-      state.metrics.vehicles = vehicles;
-      state.metrics.congestion = congestion;
-      state.metrics.avgSpeed = avgSpeed;
-      state.metrics.efficiency = efficiency;
-      state.metrics.incidents = state.activeIncidents.length;
-
-      state.volumeHistory.shift();
-      state.speedHistory.shift();
-      state.volumeHistory.push(vehicles);
-      state.speedHistory.push(avgSpeed);
-
-      state.recentAlerts = state.recentAlerts.slice(0, 9);
-    };
-
-    const createIntersectionState = (config) => {
-      const baseOffset = Math.random() * 1000;
-      return {
-        ...config,
-        signal: signalStates[Math.floor(Math.random() * signalStates.length)],
-        queue: Math.floor(Math.random() * 12) + 2,
-        blocked: false,
-        lastSignalChange: state.tick + baseOffset,
-        nextSignalDuration: 30 + Math.floor(Math.random() * 20),
-      };
-    };
-
-    const rotateSignal = (intersection) => {
-      const next = (signalStates.indexOf(intersection.signal) + 1) % signalStates.length;
-      intersection.signal = signalStates[next];
-      intersection.lastSignalChange = state.tick;
-      intersection.nextSignalDuration = 18 + Math.floor(Math.random() * 26);
-    };
-
-    const stepIntersections = () => {
-      const timeFactor = (state.flowIntensity / 100) * 1.1;
-      state.intersections.forEach((intersection) => {
-        const duration = intersection.nextSignalDuration / (1 + (state.overrideMode !== "none" ? 0.55 : 0));
-        if (state.tick - intersection.lastSignalChange > duration) {
-          rotateSignal(intersection);
-        }
-
-        const baseFlow = 6 + Math.round(Math.sin((state.tick + intersection.id.charCodeAt(0) * 3) / 16) * 4);
-        const flow = Math.max(0, Math.round(baseFlow * timeFactor));
-        intersection.queue = clamp(intersection.queue + flow - (intersection.signal === "green" ? 8 : 2), 0, 30);
-
-        if (intersection.blocked) {
-          intersection.queue = Math.min(intersection.queue + 4, 34);
-        }
-
-        if (intersection.signal === "red" && intersection.queue > 28) {
-          intersection.blocked = Math.random() < 0.03;
-        } else {
-          intersection.blocked = false;
-        }
+        // For each lamp, toggle the "active" class depending on state.
+        light.querySelectorAll(".lamp").forEach((lamp) => {
+          const lampType = lamp.dataset.light;
+          lamp.classList.toggle("active", lampType === state);
+        });
       });
-    };
+    }
 
-    const injectIncident = (type) => {
-      const active = state.intersections[Math.floor(Math.random() * state.intersections.length)];
-      active.blocked = true;
-      active.queue += 12;
-      const alert = {
-        id: Date.now(),
-        time: formatTime(state.timeOfDay),
-        type,
-        status: "Active",
-      };
-      state.activeIncidents.push(alert);
-      state.recentAlerts.unshift(alert);
-      state.metrics.incidents = state.activeIncidents.length;
-      if (state.recentAlerts.length > 9) state.recentAlerts.pop();
-    };
+    // ------------------------------------------------------------------
+    // logEvent(): Append a system log and update the log list
+    // ------------------------------------------------------------------
+    function logEvent(message) {
+      // The event loop will execute this function synchronously. It must be fast
+      // so the UI doesn't drop frames. We create a small log array and trim it.
+      const timestamp = formatTime();
+      const entry = `${timestamp} — ${message}`;
+      trafficSystem.logs.unshift(entry);
+      trafficSystem.logs = trafficSystem.logs.slice(0, 25);
 
-    const clearIncidents = () => {
-      state.activeIncidents = [];
-    };
+      const list = $("#logList");
+      list.innerHTML = trafficSystem.logs
+        .map((line) => `<li class="log-item">${line}</li>`)
+        .join("");
+    }
 
-    const updateDashboard = () => {
-      refs.statVehicles.textContent = state.metrics.vehicles.toLocaleString();
-      refs.statSpeed.textContent = state.metrics.avgSpeed.toFixed(0);
-      refs.statCongestion.textContent = `${state.metrics.congestion}%`;
-      refs.statEfficiency.textContent = `${state.metrics.efficiency}%`;
-      refs.statIncidents.textContent = state.metrics.incidents;
+    // ------------------------------------------------------------------
+    // transitionLights(): Async handler for safe light transitions
+    // ------------------------------------------------------------------
+    async function transitionLights() {
+      // This function uses async/await, which yields back to the event loop when
+      // waiting (await sleep()). That allows the browser to process UI updates,
+      // user input, and rendering frames in between each step.
 
-      const idle = state.intersections.filter((i) => i.queue < 6).length;
-      const active = state.intersections.filter((i) => i.queue >= 6 && i.queue < 18).length;
-      const blocked = state.intersections.filter((i) => i.blocked).length;
-      const incident = state.activeIncidents.length;
-
-      refs.statusIdle.textContent = idle;
-      refs.statusActive.textContent = active;
-      refs.statusBlocked.textContent = blocked;
-      refs.statusIncident.textContent = incident;
-
-      refs.footerTime.textContent = new Date().toLocaleTimeString();
-
-      const rows = state.recentAlerts.map((alert) => {
-        const label = `<span class="badge ${alert.status === "Active" ? "danger" : "warning"}"><span></span>${alert.status}</span>`;
-        return `
-          <tr>
-            <td>${alert.time}</td>
-            <td>${alert.type}</td>
-            <td>${label}</td>
-          </tr>
-        `;
-      });
-
-      refs.alertsTable.innerHTML = rows.length ? rows.join("") : "<tr><td colspan=\"3\" class=\"small\">No alerts yet.</td></tr>";
-
-      drawCharts();
-      drawMap();
-      renderIntersections();
-    };
-
-    const drawCharts = () => {
-      const drawLine = (ctx, data, lineColor, fillColor) => {
-        const dims = canvasResize(ctx.canvas);
-        const w = dims.width;
-        const h = dims.height;
-        const padding = 40;
-        const points = data.slice(-60);
-        const max = Math.max(...points, 10);
-        const min = Math.min(...points, 0);
-
-        ctx.clearRect(0, 0, dims.width, dims.height);
-
-        // background grid
-        ctx.save();
-        ctx.strokeStyle = "rgba(255,255,255,0.06)";
-        ctx.lineWidth = 1;
-        for (let y = 0; y < 5; y += 1) {
-          const yy = padding + ((h - padding * 2) / 4) * y;
-          ctx.beginPath();
-          ctx.moveTo(padding, yy);
-          ctx.lineTo(w - padding, yy);
-          ctx.stroke();
-        }
-        ctx.restore();
-
-        // line path
-        ctx.beginPath();
-        const mapped = points.map((value, index) => {
-          const px = padding + ((w - padding * 2) * index) / (points.length - 1);
-          const py = padding + ((h - padding * 2) * (1 - (value - min) / (max - min || 1)));
-          return { x: px, y: py };
-        });
-
-        mapped.forEach((point, idx) => {
-          if (idx === 0) ctx.moveTo(point.x, point.y);
-          else ctx.lineTo(point.x, point.y);
-        });
-
-        ctx.strokeStyle = lineColor;
-        ctx.lineWidth = 2.6;
-        ctx.stroke();
-
-        // fill
-        ctx.lineTo(mapped[mapped.length - 1].x, h - padding);
-        ctx.lineTo(mapped[0].x, h - padding);
-        ctx.closePath();
-        const gradient = ctx.createLinearGradient(0, padding, 0, h);
-        gradient.addColorStop(0, fillColor);
-        gradient.addColorStop(1, "rgba(255,255,255,0)");
-        ctx.fillStyle = gradient;
-        ctx.fill();
-
-        // sparkle points
-        ctx.fillStyle = lineColor;
-        mapped.slice(-3).forEach((p) => {
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
-          ctx.fill();
-        });
-      };
-
-      drawLine(volumeCtx, state.volumeHistory, "#39b7ff", "rgba(57, 183, 255, 0.25)");
-      drawLine(speedCtx, state.speedHistory, "#6be584", "rgba(107, 229, 132, 0.22)");
-    };
-
-    const drawMap = () => {
-      const rect = canvasResize(refs.mapCanvas);
-      const ctx = mapCtx;
-      ctx.clearRect(0, 0, rect.width, rect.height);
-
-      const w = rect.width;
-      const h = rect.height;
-
-      const drawRoad = (x1, y1, x2, y2, width) => {
-        ctx.strokeStyle = "rgba(255,255,255,0.08)";
-        ctx.lineWidth = width;
-        ctx.lineCap = "round";
-        ctx.beginPath();
-        ctx.moveTo(x1, y1);
-        ctx.lineTo(x2, y2);
-        ctx.stroke();
-      };
-
-      // subtle background grid
-      ctx.save();
-      ctx.strokeStyle = "rgba(255,255,255,0.04)";
-      ctx.lineWidth = 1;
-      const gridSize = 60;
-      for (let x = 0; x < w; x += gridSize) {
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, h);
-        ctx.stroke();
+      // Prevent concurrent transitions.
+      if (trafficSystem.isTransitioning) {
+        logEvent("Transition already in progress; request ignored.");
+        return;
       }
-      for (let y = 0; y < h; y += gridSize) {
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(w, y);
-        ctx.stroke();
+
+      trafficSystem.isTransitioning = true;
+      trafficSystem.pendingSwitch = false;
+
+      // Determine which direction is currently green.
+      const nsGreen = trafficSystem.intersections.ns.state === "green";
+      const activeDir = nsGreen ? "ns" : "ew";
+      const inactiveDir = nsGreen ? "ew" : "ns";
+
+      logEvent(`Starting transition: ${trafficSystem.intersections[activeDir].name} → ${trafficSystem.intersections[inactiveDir].name}`);
+
+      // 1) Yellow buffer for the active direction
+      trafficSystem.intersections[activeDir].state = "yellow";
+      trafficSystem.intersections[inactiveDir].state = "red";
+      trafficSystem.lastTransition = `Yellow ${trafficSystem.intersections[activeDir].name}`;
+      updateUI();
+
+      // Wait 3 seconds before moving to red
+      await sleep(3000);
+
+      // 2) Set active direction to red; keep other direction red for 1 second
+      trafficSystem.intersections[activeDir].state = "red";
+      trafficSystem.lastTransition = `Red ${trafficSystem.intersections[activeDir].name}`;
+      updateUI();
+
+      await sleep(1000);
+
+      // 3) Turn other direction green (exclusive state)
+      trafficSystem.intersections[inactiveDir].state = "green";
+      trafficSystem.lastTransition = `Green ${trafficSystem.intersections[inactiveDir].name}`;
+      updateUI();
+      logEvent(`Completed transition: ${trafficSystem.intersections[inactiveDir].name} is now GREEN`);
+
+      trafficSystem.isTransitioning = false;
+
+      // If user requested another switch during this transition, run again.
+      if (trafficSystem.pendingSwitch) {
+        logEvent("Processing queued switch request.");
+        trafficSystem.pendingSwitch = false;
+        await transitionLights();
       }
-      ctx.restore();
+    }
 
-      // roads
-      const nodes = state.intersections.map((i) => ({
-        x: i.x * w,
-        y: i.y * h,
-      }));
+    // ------------------------------------------------------------------
+    // handleLogic(): Entry point for user-triggered actions
+    // ------------------------------------------------------------------
+    function handleLogic(action) {
+      // This function is called by event listeners (clicks, etc.). It runs on the
+      // main thread and may schedule async behavior via transitionLights().
 
-      const pairs = [
-        [0, 1],
-        [0, 2],
-        [1, 3],
-        [2, 3],
-      ];
-
-      pairs.forEach(([a, b]) => {
-        const aPos = nodes[a];
-        const bPos = nodes[b];
-        drawRoad(aPos.x, aPos.y, bPos.x, bPos.y, 14);
-      });
-
-      state.intersections.forEach((intersection) => {
-        const x = intersection.x * w;
-        const y = intersection.y * h;
-
-        // glow + ring
-        ctx.save();
-        const color = pickColor(intersection.signal);
-        const glow = ctx.createRadialGradient(x, y, 0, x, y, 90);
-        glow.addColorStop(0, `${color}33`);
-        glow.addColorStop(1, "rgba(0,0,0,0)");
-        ctx.fillStyle = glow;
-        ctx.beginPath();
-        ctx.arc(x, y, 90, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-
-        ctx.beginPath();
-        ctx.arc(x, y, 22, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(10, 15, 25, 0.82)";
-        ctx.fill();
-
-        ctx.lineWidth = 4;
-        ctx.strokeStyle = color;
-        ctx.stroke();
-
-        ctx.fillStyle = "rgba(255,255,255,0.92)";
-        ctx.font = "bold 13px system-ui";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText(intersection.id, x, y);
-
-        // queue indicator
-        ctx.globalAlpha = 0.7;
-        ctx.fillStyle = "rgba(255,255,255,0.16)";
-        ctx.beginPath();
-        ctx.arc(x, y, 34, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.globalAlpha = 1;
-        ctx.fillStyle = "rgba(255,255,255,0.83)";
-        ctx.font = "11px system-ui";
-        ctx.fillText(`${intersection.queue} queued`, x, y + 34);
-
-        if (intersection.blocked) {
-          ctx.fillStyle = "rgba(255, 90, 122, 0.85)";
-          ctx.beginPath();
-          ctx.arc(x, y, 12, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.fillStyle = "rgba(255,255,255,0.9)";
-          ctx.font = "bold 11px system-ui";
-          ctx.fillText("!", x, y);
+      if (action === "switch") {
+        // If a transition is already in progress, queue the request.
+        if (trafficSystem.isTransitioning) {
+          trafficSystem.pendingSwitch = true;
+          logEvent("Switch requested during transition; queued.");
+          updateUI();
+          return;
         }
-      });
-    };
 
-    const renderIntersections = () => {
-      const fragment = document.createDocumentFragment();
-      state.intersections.forEach((intersection) => {
-        const card = document.createElement("div");
-        card.className = "stat";
-        const signal = intersection.signal;
-        const color = pickColor(signal);
-        const badge = `<span class=\"badge\" style=\"color: rgba(255,255,255,0.85); border-color: rgba(255,255,255,0.14); background: ${color}22\"><span style=\"background:${color};\"></span>${signal.toUpperCase()}</span>`;
-        card.innerHTML = `
-          <div style=\"display:flex;justify-content:space-between;align-items:center;gap:10px;\">
-            <div>
-              <div style=\"font-weight:700;\">${intersection.name}</div>
-              <div class=\"small\">Queue: ${intersection.queue}</div>
-            </div>
-            ${badge}
-          </div>
-          <div style=\"margin-top: 8px; display:flex;gap:8px;\">
-            <button class=\"btn-primary\" style=\"padding:8px 10px;font-size:0.83rem;\" data-action=\"toggle\" data-id=\"${intersection.id}\">Toggle</button>
-            <button class=\"btn-primary\" style=\"padding:8px 10px;font-size:0.83rem;\" data-action=\"clear\" data-id=\"${intersection.id}\">Clear</button>
-          </div>
-        `;
-        fragment.appendChild(card);
-      });
-      refs.intersectionRow.innerHTML = "";
-      refs.intersectionRow.appendChild(fragment);
+        transitionLights();
+      }
+    }
 
-      refs.intersectionRow.querySelectorAll("button").forEach((button) => {
-        button.addEventListener("click", (event) => {
-          const action = event.currentTarget.dataset.action;
-          const id = event.currentTarget.dataset.id;
-          const target = state.intersections.find((i) => i.id === id);
-          if (!target) return;
+    // ------------------------------------------------------------------
+    // init(): Set up initial state, attach event listeners, and start UI
+    // ------------------------------------------------------------------
+    function init() {
+      // Initial state setup
+      trafficSystem.intersections.ns.state = "green";
+      trafficSystem.intersections.ew.state = "red";
+      trafficSystem.isTransitioning = false;
+      trafficSystem.pendingSwitch = false;
+      trafficSystem.logs = [];
+      trafficSystem.lastTransition = "Initialized";
 
-          if (action === "toggle") {
-            rotateSignal(target);
-            state.recentAlerts.unshift({
-              id: Date.now(),
-              time: formatTime(state.timeOfDay),
-              type: `Manual toggle @ ${target.name}`,
-              status: "Active",
-            });
-          }
-
-          if (action === "clear") {
-            target.blocked = false;
-            target.queue = Math.max(0, target.queue - 6);
-          }
-        });
-      });
-    };
-
-    const updateLabels = () => {
-      refs.timeOfDayLabel.textContent = formatTime(state.timeOfDay);
-      const intensity = state.flowIntensity;
-      if (intensity < 30) refs.flowLabel.textContent = "Low";
-      else if (intensity < 60) refs.flowLabel.textContent = "Normal";
-      else if (intensity < 85) refs.flowLabel.textContent = "Heavy";
-      else refs.flowLabel.textContent = "Max";
-    };
-
-    const onTick = () => {
-      state.tick += 1;
-      updateMetrics();
-      stepIntersections();
-      updateDashboard();
-    };
-
-    const resetSimulation = () => {
-      state.tick = 0;
-      state.activeIncidents = [];
-      state.recentAlerts = [];
-      state.volumeHistory = Array(60).fill(0);
-      state.speedHistory = Array(60).fill(0);
-      state.intersections = intersectionConfigs.map(createIntersectionState);
-      updateMetrics();
-      updateDashboard();
-    };
-
-    const downloadSnapshot = () => {
-      const link = document.createElement("a");
-      const canvas = document.createElement("canvas");
-      const rect = document.body.getBoundingClientRect();
-      const dpr = window.devicePixelRatio || 1;
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
-      const ctx = canvas.getContext("2d");
-      ctx.scale(dpr, dpr);
-
-      ctx.fillStyle = "#0b1220";
-      ctx.fillRect(0, 0, rect.width, rect.height);
-
-      ctx.fillStyle = "rgba(255,255,255,0.9)";
-      ctx.font = "22px system-ui";
-      ctx.fillText("Intelligent Traffic Control Snapshot", 20, 40);
-      ctx.font = "14px system-ui";
-      ctx.fillText(`Captured: ${new Date().toLocaleString()}`, 20, 68);
-
-      link.download = `traffic-snapshot-${Date.now()}.png`;
-      link.href = canvas.toDataURL("image/png");
-      link.click();
-    };
-
-    const setupEventListeners = () => {
-      refs.timeOfDay.addEventListener("input", (ev) => {
-        state.timeOfDay = parseInt(ev.target.value, 10);
-        updateLabels();
+      // Attach UI event listeners
+      $("#btnSwitch").addEventListener("click", () => {
+        handleLogic("switch");
       });
 
-      refs.flowIntensity.addEventListener("input", (ev) => {
-        state.flowIntensity = parseInt(ev.target.value, 10);
-        updateLabels();
-      });
+      // Render initial UI state
+      updateUI();
+      logEvent("Dashboard initialized.");
 
-      refs.overrideMode.addEventListener("change", (ev) => {
-        state.overrideMode = ev.target.value;
-      });
-
-      refs.btnTriggerIncident.addEventListener("click", () => {
-        const mode = state.overrideMode === "none" ? "Traffic Jam" : `${state.overrideMode} Response`;
-        injectIncident(mode);
-      });
-
-      refs.btnReset.addEventListener("click", () => {
-        resetSimulation();
-      });
-
-      refs.btnSnapshot.addEventListener("click", () => {
-        downloadSnapshot();
-      });
-
-      window.addEventListener("resize", () => {
-        drawCharts();
-        drawMap();
-      });
-
-      // Clean up old alerts periodically
+      // Keep footer time updated every second (demonstrates event loop tick behavior)
       setInterval(() => {
-        const now = Date.now();
-        state.recentAlerts = state.recentAlerts.filter((alert) => now - alert.id < 90_000);
-      }, 5000);
-    };
+        $("#footerTime").textContent = formatTime();
+      }, 1000);
+    }
 
-    const init = () => {
-      state.intersections = intersectionConfigs.map(createIntersectionState);
-      updateLabels();
-      setupEventListeners();
-      resetSimulation();
-
-      // tick loop
-      setInterval(onTick, 1000);
-    };
-
-    init();
+    // Kick off initialization when the DOM is ready.
+    document.addEventListener("DOMContentLoaded", init);
   </script>
 </body>
 </html>
