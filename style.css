@@ -90,6 +90,78 @@ header p {
   color: #a0aec0;
 }
 
+/* ---------- Road / Traffic Particles ---------- */
+.road {
+  position: relative;
+  width: 180px;
+  height: 90px;
+  margin-top: 8px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  overflow: hidden;
+}
+
+.road#ew-road {
+  width: 220px;
+  height: 70px;
+}
+
+.particles {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.particle {
+  position: absolute;
+  width: 14px;
+  height: 10px;
+  border-radius: 4px;
+  opacity: 0.85;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+.particles.horizontal .particle {
+  top: 50%;
+  transform: translateY(-50%);
+  animation-name: drive-right;
+}
+
+.particles.vertical .particle {
+  left: 50%;
+  transform: translateX(-50%);
+  animation-name: drive-down;
+}
+
+.particles.go .particle {
+  animation-duration: var(--speed, 3s);
+  animation-play-state: running;
+  opacity: 0.9;
+}
+
+.particles.warning .particle {
+  animation-duration: var(--speed, 5s);
+  animation-play-state: running;
+  opacity: 0.6;
+}
+
+.particles.stop .particle {
+  animation-play-state: paused;
+  opacity: 0.3;
+}
+
+@keyframes drive-right {
+  0% { left: -20px; }
+  100% { left: 110%; }
+}
+
+@keyframes drive-down {
+  0% { top: -20px; }
+  100% { top: 110%; }
+}
+
 .lane-badge {
   font-size: 0.7rem;
   background: #2d3748;
@@ -312,6 +384,17 @@ fieldset {
 .btn-sm {
   padding: 4px 12px;
   font-size: 0.72rem;
+}
+
+.pedestrian-status {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #22c55e;
+  border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 /* ─── RIGHT PANEL — Log (30%) ────────────────────────────────── */

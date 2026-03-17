@@ -34,6 +34,11 @@
             <div class="light yellow" id="ns-yellow"></div>
             <div class="light green"  id="ns-green"></div>
           </div>
+
+          <div class="road" id="ns-road">
+            <div class="particles vertical"></div>
+          </div>
+
           <span class="state-text" id="ns-state-text">STOP</span>
         </figure>
 
@@ -51,6 +56,11 @@
             <div class="light yellow" id="ew-yellow"></div>
             <div class="light green"  id="ew-green"></div>
           </div>
+
+          <div class="road" id="ew-road">
+            <div class="particles horizontal"></div>
+          </div>
+
           <span class="state-text" id="ew-state-text">GO</span>
         </figure>
 
@@ -74,6 +84,15 @@
           <button class="btn btn-primary" id="btn-transition">
             ⏩ Trigger Transition
           </button>
+        </fieldset>
+
+        <!-- Pedestrian Crossing -->
+        <fieldset class="control-group pedestrian-group">
+          <legend class="visually-hidden">Pedestrian crossing</legend>
+          <button class="btn btn-warning" id="btn-pedestrian">
+            🚶‍♀️ Pedestrian Crossing
+          </button>
+          <span id="pedestrian-status" class="pedestrian-status">READY</span>
         </fieldset>
 
         <!-- Timed Controls -->

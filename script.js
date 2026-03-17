@@ -13,6 +13,8 @@ const State = {
   mode: 'manual',       // 'manual' | 'timed'
   transitioning: false, // true while a transition animation is running
   timedTimeout: null,   // holds the setTimeout reference for timed mode
+  pedestrianWaiting: false, // true when a pedestrian has requested crossing
+  pedestrianCrossing: false, // true while pedestrians are crossing
 };
 
 /* ─────────────────────────────────────────────────────────────
@@ -53,6 +55,8 @@ const nsTimeInput    = $('ns-time');
 const ewTimeInput    = $('ew-time');
 const logContainer   = $('log-container');
 const btnClearLog    = $('btn-clear-log');
+const btnPedestrian  = $('btn-pedestrian');
+const pedestrianStatus = $('pedestrian-status');
 const labelManual    = $('label-manual');
 const labelTimed     = $('label-timed');
 
@@ -95,6 +99,30 @@ function renderLight(lights, stateText, state) {
 function renderAll() {
   renderLight(nsLights, nsStateText, State.ns);
   renderLight(ewLights, ewStateText, State.ew);
+  updatePedestrianUI();
+  updateTrafficFlow();
+}
+
+/* ─────────────────────────────────────────────────────────────
+   PEDESTRIAN UI
+   Updates the crosswalk indicator and button state.
+───────────────────────────────────────────────────────────── */
+function updatePedestrianUI() {
+  if (!pedestrianStatus || !btnPedestrian) return;
+
+  if (State.pedestrianCrossing) {
+    pedestrianStatus.textContent = 'WALK';
+    pedestrianStatus.style.color = '#22c55e';
+    btnPedestrian.disabled = true;
+  } else if (State.pedestrianWaiting) {
+    pedestrianStatus.textContent = 'WAIT';
+    pedestrianStatus.style.color = '#f59e0b';
+    btnPedestrian.disabled = true;
+  } else {
+    pedestrianStatus.textContent = 'READY';
+    pedestrianStatus.style.color = '#22c55e';
+    btnPedestrian.disabled = false;
+  }
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -121,6 +149,22 @@ function log(message, type = 'info') {
   while (logContainer.children.length > 80) {
     logContainer.removeChild(logContainer.lastChild);
   }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   PEDESTRIAN REQUEST
+   Queue a pedestrian crossing request without interrupting the
+   current active green cycle.
+───────────────────────────────────────────────────────────── */
+function handlePedestrianRequest() {
+  if (State.pedestrianWaiting || State.pedestrianCrossing) {
+    log('🚶‍♂️ Pedestrian request already queued/active, please wait.', 'info');
+    return;
+  }
+
+  State.pedestrianWaiting = true;
+  updatePedestrianUI();
+  log('🚶‍♀️ Pedestrian crossing requested — will occur after current green cycle.', 'info');
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -165,8 +209,8 @@ function runManualTransition(callback) {
     }
     renderAll();
 
-    // Step 3: After 0.6s → waiting lane goes to GO
-    setTimeout(function () {
+    // Step 3: After 0.6s → waiting lane goes to GO (unless pedestrian crossing is queued)
+    const completeTransition = () => {
       log('✅ ' + waitingLane + ' → GO', 'success');
 
       if (activeIsNS) {
@@ -184,10 +228,30 @@ function runManualTransition(callback) {
       if (typeof callback === 'function') {
         callback();
       }
+    };
 
-    }, 600);
+    const startWaitingLane = () => {
+      setTimeout(completeTransition, 600);
+    };
+
+    if (State.pedestrianWaiting) {
+      // Run pedestrian crossing phase before allowing the next lane to go.
+      State.pedestrianWaiting = false;
+      State.pedestrianCrossing = true;
+      updatePedestrianUI();
+      log('🚸 Pedestrian crossing active — all lights red', 'info');
+
+      setTimeout(() => {
+        State.pedestrianCrossing = false;
+        updatePedestrianUI();
+        startWaitingLane();
+      }, 4000);
+    } else {
+      startWaitingLane();
+    }
   }, 1500);
 }
+
 
 /* ─────────────────────────────────────────────────────────────
    START TIMED MODE
@@ -254,6 +318,9 @@ btnTransition.addEventListener('click', function () {
   runManualTransition();
 });
 
+// Pedestrian crossing button
+btnPedestrian.addEventListener('click', handlePedestrianRequest);
+
 // Timed mode — Start button
 btnStartTimed.addEventListener('click', function () {
   stopTimedMode(); // clear any previous cycle first
@@ -264,6 +331,68 @@ btnStartTimed.addEventListener('click', function () {
 btnStopTimed.addEventListener('click', function () {
   stopTimedMode();
 });
+
+/* ─────────────────────────────────────────────────────────────
+   TRAFFIC PARTICLES
+   Spawns animated vehicle particles in the traffic lanes.
+───────────────────────────────────────────────────────────── */
+function randomBetween(min, max) {
+  return min + Math.random() * (max - min);
+}
+
+function createParticles(container, count) {
+  const colors = ['#22c55e', '#3b82f6', '#f59e0b', '#ef4444', '#a855f7'];
+  const isHorizontal = container.classList.contains('horizontal');
+
+  for (let i = 0; i < count; i += 1) {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    particle.style.background = colors[i % colors.length];
+    particle.style.animationDelay = `${randomBetween(0, 2)}s`;
+
+    // Spread particles along the 'road' axis for a more natural feel.
+    if (isHorizontal) {
+      particle.style.top = `${randomBetween(20, 70)}%`;
+    } else {
+      particle.style.left = `${randomBetween(20, 70)}%`;
+    }
+
+    container.appendChild(particle);
+  }
+}
+
+function spawnTrafficParticles() {
+  const nsContainer = document.querySelector('#ns-road .particles');
+  const ewContainer = document.querySelector('#ew-road .particles');
+
+  if (nsContainer) createParticles(nsContainer, 7);
+  if (ewContainer) createParticles(ewContainer, 6);
+}
+
+function updateTrafficFlow() {
+  const nsFlow = document.querySelector('#ns-road .particles');
+  const ewFlow = document.querySelector('#ew-road .particles');
+
+  if (!nsFlow || !ewFlow) return;
+
+  const stateMap = {
+    go: { className: 'go', speed: '3s' },
+    warning: { className: 'warning', speed: '5s' },
+    stop: { className: 'stop', speed: '0s' },
+  };
+
+  const nsConfig = stateMap[State.ns] || stateMap.stop;
+  const ewConfig = stateMap[State.ew] || stateMap.stop;
+
+  nsFlow.classList.remove('go', 'warning', 'stop');
+  ewFlow.classList.remove('go', 'warning', 'stop');
+
+  nsFlow.classList.add(nsConfig.className);
+  ewFlow.classList.add(ewConfig.className);
+
+  nsFlow.style.setProperty('--speed', nsConfig.speed);
+  ewFlow.style.setProperty('--speed', ewConfig.speed);
+}
 
 // Mode slider — switches between Manual and Timed
 modeSlider.addEventListener('input', function () {
@@ -297,5 +426,6 @@ btnClearLog.addEventListener('click', function () {
    Run when the page first loads — render the initial state.
 ───────────────────────────────────────────────────────────── */
 renderAll();
+spawnTrafficParticles();
 log('🚦 Traffic Simulator initialized', 'info');
 log('N–S: STOP | E–W: GO', 'success');
