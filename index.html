@@ -3,73 +3,115 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Intelligent Traffic Control Dashboard</title>
-  <link rel="stylesheet" href="styles.css" />
+  <title>Smart Traffic Intersection Simulator</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+
+  <!-- ===== HEADER ===== -->
   <header>
-    <div>
-      <h1>Intelligent Traffic Control</h1>
-      <p class="subtitle">Glassmorphism dashboard · 2-way intersection state machine</p>
-    </div>
-    <button class="btn btn-primary" id="btnSwitch">Switch Lights</button>
+    <h1>🚦 Smart Traffic Intersection Simulator</h1>
+    <p>North–South (Main) &amp; East–West (Intersecting) — Web Development Class Project</p>
   </header>
 
-  <main>
-    <section class="card sim">
-      <div class="dashboard">
-        <div class="simulation">
-          <div class="sim-canvas" aria-label="Visual simulation">
-            <div class="lights" id="lights">
-              <div class="light-group" aria-label="North-South signal">
-                <h3>North–South</h3>
-                <div class="traffic-light" data-direction="ns">
-                  <div class="lamp red" data-light="red"></div>
-                  <div class="lamp yellow" data-light="yellow"></div>
-                  <div class="lamp green" data-light="green"></div>
-                </div>
-              </div>
-              <div class="light-group" aria-label="East-West signal">
-                <h3>East–West</h3>
-                <div class="traffic-light" data-direction="ew">
-                  <div class="lamp red" data-light="red"></div>
-                  <div class="lamp yellow" data-light="yellow"></div>
-                  <div class="lamp green" data-light="green"></div>
-                </div>
-              </div>
-            </div>
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="main-content">
+
+    <!-- LEFT: Simulation Panel (70%) -->
+    <section class="simulation-panel">
+
+      <!-- Traffic Lights -->
+      <section class="intersection-container">
+
+        <!-- North–South Light -->
+        <figure class="traffic-light-unit">
+          <figcaption>
+            <span class="lane-label">North–South</span>
+            <span class="lane-badge">Main Lane</span>
+          </figcaption>
+          <div class="traffic-light" id="ns-light">
+            <div class="light red"    id="ns-red"></div>
+            <div class="light yellow" id="ns-yellow"></div>
+            <div class="light green"  id="ns-green"></div>
           </div>
+          <span class="state-text" id="ns-state-text">STOP</span>
+        </figure>
 
-          <div class="control-panel" aria-label="Simulation controls">
-            <div class="status">
-              <span>Current state:</span>
-              <span class="value" id="currentState">Initializing…</span>
-            </div>
-            <div class="status">
-              <span>Pending action:</span>
-              <span class="value" id="pendingState">None</span>
-            </div>
-            <div class="status">
-              <span>Last transition:</span>
-              <span class="value" id="lastTransition">—</span>
-            </div>
+        <!-- Intersection Icon -->
+        <span class="intersection-icon" aria-hidden="true">✚</span>
+
+        <!-- East–West Light -->
+        <figure class="traffic-light-unit">
+          <figcaption>
+            <span class="lane-label">East–West</span>
+            <span class="lane-badge">Intersecting Lane</span>
+          </figcaption>
+          <div class="traffic-light" id="ew-light">
+            <div class="light red"    id="ew-red"></div>
+            <div class="light yellow" id="ew-yellow"></div>
+            <div class="light green"  id="ew-green"></div>
           </div>
-        </div>
-      </div>
-    </section>
+          <span class="state-text" id="ew-state-text">GO</span>
+        </figure>
 
-    <section class="card logs">
-      <h2>System Logs</h2>
-      <div class="logs">
-        <ol class="log-list" id="logList" aria-label="System log"></ol>
-      </div>
-    </section>
-  </main>
+      </section><!-- /intersection-container -->
 
+      <!-- Controls Panel -->
+      <section class="controls-panel">
+        <h3>⚙ Controls</h3>
+
+        <!-- Mode Toggle Slider -->
+        <fieldset class="mode-toggle-row">
+          <legend class="visually-hidden">Operating mode</legend>
+          <span class="mode-label" id="label-manual">Manual</span>
+          <input type="range" class="mode-slider" id="mode-slider" min="0" max="1" step="1" value="0" aria-label="Switch between manual and timed mode" />
+          <span class="mode-label" id="label-timed">Timed</span>
+        </fieldset>
+
+        <!-- Manual Controls -->
+        <fieldset class="control-group" id="manual-controls">
+          <legend class="visually-hidden">Manual controls</legend>
+          <button class="btn btn-primary" id="btn-transition">
+            ⏩ Trigger Transition
+          </button>
+        </fieldset>
+
+        <!-- Timed Controls -->
+        <fieldset class="control-group hidden" id="timed-controls">
+          <legend class="visually-hidden">Timed controls</legend>
+          <div class="timed-input-group">
+            <label for="ns-time">N–S Go Time (sec)</label>
+            <input type="text" id="ns-time" value="10" placeholder="e.g. 10" />
+          </div>
+          <div class="timed-input-group">
+            <label for="ew-time">E–W Go Time (sec)</label>
+            <input type="text" id="ew-time" value="7" placeholder="e.g. 7" />
+          </div>
+          <button class="btn btn-success" id="btn-start-timed">▶ Start</button>
+          <button class="btn btn-danger"  id="btn-stop-timed">■ Stop</button>
+        </fieldset>
+
+      </section><!-- /controls-panel -->
+    </section><!-- /simulation-panel -->
+
+    <!-- RIGHT: Log Panel (30%) -->
+    <aside class="log-panel">
+      <header class="log-header">
+        <h3>📋 Event Log</h3>
+        <button class="btn btn-secondary btn-sm" id="btn-clear-log">Clear</button>
+      </header>
+      <div id="log-container"></div>
+    </aside>
+
+  </main><!-- /main-content -->
+
+  <!-- ===== FOOTER ===== -->
   <footer>
-    Built with vanilla HTML, CSS, and JS • Last update: <span id="footerTime"></span>
+    <span>🚦 Traffic Intersection Simulator — Web Dev Class</span>
+    <span>HTML &bull; CSS &bull; JavaScript (Vanilla)</span>
+    <span>Session &copy; 2025</span>
   </footer>
 
-  <script src="script.js" defer></script>
+  <script src="script.js"></script>
 </body>
 </html>
